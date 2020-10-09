@@ -1,0 +1,818 @@
+---
+title: "Programming for Data Science"
+author: as
+date: 25/09/20
+output:
+    html_document:
+        theme: cosmo
+        highlight: tango
+        toc: true
+        toc_float:
+            collapsed: true
+        df_print: paged
+---
+
+
+```{r setup, include = FALSE}
+#clear up the environment
+rm(list = ls())
+# chunk options
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  comment = "#>"
+)
+```
+
+**Dasar - dasar penggunakan R.**
+R dapat digunakan menggunakan R Studio atau Pycharm.
+
+**Operasi Matematika:**
+* `+` operasi penjumlahan
+* `-` operasi pengurangan
+* `*` operasi perkalian
+* `/` operasi pembagian
+* `^` operasi pangkat
+
+**Logical Operator:**
+* `>` lebih dari
+* `<` kurang dari
+* `>=` lebih dari sama dengan
+* `<=` kurang dari sama dengan
+* `==` mengecek kesamaan 2 nilai
+* `!=` tidak sama dengan
+* `&` dan
+* `|` atau
+
+**Objek**
+Untuk pengolahan data di R, data akan disimpan/diassign dalam objek. Objek yang terbentuk akan tersimpan di environment. Untuk assign objek dapat menggunakan `<-`:
+
+```{r}
+# objek bernama `nama` berisi suatu value:
+nama <- "Agus"
+# print isi objek
+nama
+```
+Gunakan `c()` untuk menggabungkan beberapa nilai:
+```{r}
+nama <- c("Agus", "David", "Lita")
+nama
+```
+
+**NOTE** bahwa objek awal `nama`, nilainya jadi terganti dengan data yang baru. Objek awal dengan nama yang sama, akan di-*overwrite* oleh data yang baru. Oleh karena itu, hati-hati saat membuat penamaan objek. Bila ingin isi datanya beda dan tidak ingin data awal terhapus, nama objeknya harus berbeda.
+
+
+**Tipe Data**
+Objek R dapat menyimpan beberapa tipe data. Memahami tipe data penting karena setiap tipe data akan diolah dengan cara yang berbeda. Tipe data di R diantaranya:
+1. Character
+2. Numeric
+3. Integer
+4. Logical
+5. Complex
+Cek tipe data dapat menggunakan fungsi `class()`:
+```{r}
+class(nama)
+```
+
+## Character
+Tipe data yang berisi huruf/karakter.
+Buat objek namanya `teman`, isi dengan 3 nama teman anda di kelas ini:
+```{r}
+teman <- c("Nabiilah" ,"David", "Lita")
+teman # print/cek isi objek
+```
+## Numeric
+Tipe data berisi angka: dapat berupa bilangan bulat (data diskrit) ataupun pecahan/desimal (data kontinu).
+```{r}
+tinggi <- c(147.5, 170, 150)
+tinggi
+```
+## Integer
+Tipe data berupa bilangan bulat (tanpa koma). Umumnya untuk data ID atau jumlah sesuatu (costumer ID, transaction ID, jumlah anak, jumlah kehadiran, dll). Untuk memaksa numeric menjadi integer, dapat gunakann L dibelakang angka.
+```{r}
+jumlah_kehadiran <- c(3L, 4L, 4L) # penamaan objek tidak boleh ada spasi
+class(jumlah_kehadiran)
+```
+## Logical
+Tipe data yang hanya berisi `TRUE` atau `FALSE`. Penulisan TRUE/FALSE dapat disingkat menjadi T/F.
+```{r}
+logical <- c(TRUE, FALSE, FALSE)
+```
+
+```{r}
+class(logical)
+```
+## Complex
+Gabungan antara angka dan bilangan imaginer. Tipe data yang jarang digunakan, umumnya utk formula elektro dan fisika.
+
+```{r}
+complex <- c(5i + 2, 4i + 2)
+```
+
+# Struktur Data
+Data dapat disimpan dalam objek dalam beberapa struktur data. Struktur data dapat berupa 1D atau 2D.
+
+## Vektor
+
+Objek satu dimensi yang harus memiliki **1 tipe data yang sama**.
+Bila dalam satu vektor terdapat tipe data yang berbeda maka R akan melakukan *implicit coercion*. Implicit coercion adalah ketika tipe data yang berbeda dalam 1 objek diubah menjadi 1 tipe data yang sama, berdasarkan tipe data paling general.
+
+Hirarki tipe data dari paling general hingga paling spesifik:
+
+> Character > Complex > Numeric > Integer > Logical
+
+## Matrix
+Tipe data dengan 2 dimensi (punya baris dan kolom), nilai didalamnya harus memiliki **tipe data yang sama**. Terdapat beberapa cara untuk membuat matrix:
+
+**cara 1**: menggunakan fungsi `matrix()`
+
+```{r}
+matri <- matrix(11:16, # data angka dari 11 sampai 16
+                nrow = 3, # jumlah baris
+                ncol = 2) # jumlah kolom
+matri
+```
+* Secara default, value pada matrix akan diisi berdasarkan kolom (1 kolom terisi penuh dulu, baru kolom selanjutnya). Untuk menggantiinya jadi berdasarkan baris, gunakan parameter `byrow = TRUE`
+```{r}
+matri2 <- matrix(11:16, nrow = 3, ncol = 2, byrow = TRUE)
+matri2
+```
+**cara 2**: menggunakan fungsi `cbind` dan `rbind`
+* cbind (column bind) untuk menggabungkan beberapa vektor menjadi beberapa kolom:
+```{r}
+data <- cbind(teman, tinggi, jumlah_kehadiran)
+data
+```
+
+* rbind (row bind) untuk menggabungkan beberapa vektor menjadi beberapa baris
+- ketika menggunakan rbind/colbind untuk membuat matrix, nama vektor awal akan menjadi nama baris/kolom dari matrix.
+- karena matrix hanya menerima 1 tipe data, maka seluruh tipe data akan diubah ke tipe yang paling general  (dalam kasus ini "character"). Di bawah ini semua value sudah memiliki tanda kutip yang mengartikan matrix menyimpan tipe data karakter.
+
+Untuk subset (mengambil data) dari matrix dapat menggunakan `[,]`. Dimana [index baris, index kolom].
+
+```{r}
+# mengambil "Nabiilah"
+data[1,1]
+```
+
+Kita bisa mengubah value dalam matrix dengan meng-assign value tertentu pada baris & kolom tertentu:
+
+```{r}
+data[1,1] <- "Sholehhudin"
+data
+```
+## List
+list adalah tipe data 1 dimensi yang didalamnya bisa mengandung vector. Vector pada list dapat memiliki jumlah yang berbeda, dan diisi dengan **tipe data yang berbeda**.
+
+```{r}
+# membuat list menggunakan `list()`
+list1 <- list(c(1,3,4), # vektor 1
+              c("Ani", "Budi"), # vektor 2
+              TRUE) # vektor 3
+list1
+```
+
+```{r}
+class(list1)
+```
+
+Cara subset list bisa menggunakan `[]` atau `[[]]`.
+
+gunakan `[]` untuk subset list beserta indexnya.
+gunakan `[[]]` untuk subset list tanpa indexnya.
+
+```{r}
+# subset list index kedua
+list1[2]
+# subset data pada list index kedua
+list1[[2]]
+```
+
+## Data Frame
+Struktur data berupa tabel. Dapat berisi tipe data yang berbeda namun jumlah barisnya harus sama. Struktur data ini yang lebih sering kita gunakan untuk menyimpan data.
+
+```{r}
+# membuat data frame
+dataframe1 <- data.frame(teman, tinggi, jumlah_kehadiran)
+dataframe1
+```
+
+Exploring Data Frame:
+
+```{r}
+# cek tipe data
+class(dataframe1)
+```
+
+```{r}
+# cek dimensi data frame
+dim(dataframe1)
+```
+```{r}
+# cek nama kolom
+colnames(dataframe1)
+```
+```{r}
+# cek nama/indeks baris
+rownames(dataframe1)
+```
+
+# Working with Data
+
+Sebelum memulai project di R, kita harus bekerja dalam satu folder/working directory. Sehingga semua file/data yang akan kita olah dan hasil pengolahannya dapat disimpan di 1 folder yang sama. Terdapat fungsi untuk mengetahui (get) working directory kita dan set working directory.
+
+```{r}
+# get working directory
+getwd()
+
+# set working directory
+# setwd("C:/Users/Lenovo ip-320/Downloads/P4DS")
+```
+Bila sudah menggunakan Rproject (dari folder working directory) maka tidak perlu `setwd()`.
+
+## Read Data
+
+Terdapat beragam file yang bisa dibaca di R. Contohnya untuk membaca file csv adalah sebagai berikut:
+
+`read.csv("lokasi working directory")`
+
+```{r}
+# cara 1: alamat file lengkap
+# read.csv("F:/ALGORITMA/P4DS/P4DS/data_input/retail.csv")
+```
+
+```{r}
+# cara 2: alamat file dapat dipersingkat bila ada di working directory
+library(readr)
+retail <- read.csv("data_input/retail.csv",
+                   sep=",",
+                   fileEncoding = "ISO-8859-1")
+#retail <- read.csv("data_input/retail.csv") # assign ke objek
+```
+
+Sebelum mengolah data, kita perlu tau tentang data kita. Berikut adalah fungsi yang dapat digunakan:
+
+1. Cek baris dan kolom data:
+
+```{r}
+dim(retail)
+```
+```{r}
+nrow(retail)
+ncol(retail)
+```
+
+2. Cek nama kolom:
+
+```{r}
+colnames(retail)
+```
+
+3. Cek data teratas dengan fungsi `head()`:
+
+`head(data, jumlah data yang ingin ditampilkan)`
+
+```{r}
+head(retail, 3) #secara default 6 data
+```
+
+4. Cek data terbawah dengan fungsi `tail()`:
+
+`tail(data, jumlah data yang ingin ditampilkan)`
+
+```{r}
+tail(retail, 10) # secara default 6 data
+```
+
+5. Cek missing value (NA):
+
+```{r}
+anyNA(retail) # cek NA dari keseluruhan data
+colSums(is.na(retail)) # cek NA perkolom
+```
+
+Note: untuk deteksi baris yang mengandung NA dilampirkan di section paling bawah.
+
+5. Melihat struktur data secara keseluruhan:
+
+```{r}
+str(retail)
+```
+
+Untuk mengintip distribusi data bisa menggunakan `summary()`.
+
+```{r}
+summary(retail)
+```
+**Discussion!** Apakah terdapat tipe data yang kurang tepat?
+
+* Date: tanggal & waktu
+  + Order.Date
+  + Ship.Date
+* Factor: karakter yang berulang (kategorikal)
+  + Ship.Mode
+  + Segment
+  + Category
+  + Sub.Category
+
+## Data Cleaning (Wrangling)
+
+Pengubahan tipe data oleh user disebut **explicit coercion**.
+
+1. Ubah kolom ke tipe Date dengan `as.Date`:
+
+Order Date:
+
+```{r}
+# cek format tanggal awal
+head(retail$Order.Date)
+tail(retail$Order.Date)
+```
+
+```{r}
+retail$Order.Date <- as.Date(retail$Order.Date,
+                             "%m/%d/%y") # format data awal
+```
+
+Ship.Date:
+
+```{r}
+# cek format tanggal awal
+head(retail$Ship.Date)
+tail(retail$Ship.Date)
+```
+
+```{r}
+# ubah tipe data
+retail$Ship.Date <- as.Date(retail$Ship.Date, "%m/%d/%y")
+```
+
+Note: Memang sulit bila harus menghafalkan format tanggal yang harus dimasukan ke dalam fungsi. Pada course DV akan diajarkan package `lubridate` yang membuat pengubahan/pengolahan tipe data Date manjadi lebih mudah.
+
+2. Ubah kolom ke tipe factor dengan `as.factor`:
+
+  + Ship.Mode
+  + Segment
+  + Category
+  + Sub.Category
+
+```{r}
+retail$Ship.Mode <- as.factor(retail$Ship.Mode)
+retail$Segment <- as.factor(retail$Segment)
+retail$Category <- as.factor(retail$Category)
+retail$Sub.Category <- as.factor(retail$Sub.Category)
+```
+
+Note: Untuk pengubahan beberapa kolom sekaligus, dilampirkan pada section paling bawah.
+
+Fungsi-fungsi explicit coercion lain:
+
+* as.character()
+* as.integer()
+* as.numeric()
+* dll.
+
+Kita dapat cek ulang tipe data:
+
+```{r}
+# cek data menggunakan `class()`
+class(retail$Ship.Mode)
+```
+
+```{r}
+# cek data menggunakan `str()`
+str(retail)
+```
+
+**Notice:** Untuk tipe data faktor, ditampilkan jumlah levels (kategori unik) kemudian indeks levels tersebut untuk tiap observasi.
+
+```{r}
+# cek levels pada factor
+levels(retail$Ship.Mode) # terdapat 4 kategori unik (4 indeks)
+```
+
+```{r}
+# cek data asli
+head(retail$Ship.Mode)
+```
+
+Oleh karena itu di kolom Ship.Mode baris 1-3, label yang muncul adalah "Second Class".
+
+```{r}
+# cek data menggunakan `summary()`
+summary(retail)
+```
+
+**Notice:** Untuk tipe data faktor, ditampilkan jumlah observasi untuk tiap levels (kategori unik). Saat sudah menjadi faktor, data lebih informatif dan mudah untuk dieksplorasi.
+
+**Discussion!**
+
+1. Berapa diskon tertinggi yang pernah diberikan perusahaan (berdasarkan data retail)? 80%
+
+2. Pelanggan dari segmen mana yang paling sering melakukan pembelian? Consumer
+
+3. Produk dari kategori apa yang paling sering dibeli oleh pelanggan? Office Supplies
+
+## Sampling Data
+
+Sampling data digunakan untuk mengambil beberapa baris secara random dari data. Biasanya dipakai ketika machine learning. Untuk sampling data gunakan fungsi `sample()` dan random number generator `set.seed()`.
+
+```{r}
+# contoh sederhana menggunakan vector
+# tanpa set.seed() sampling akan berubah tiap kali running
+Daerah <- c("Bandung", "Jakarta", "Yogyakarta", "Medan")
+sample(Daerah, 3)
+```
+
+```{r}
+# `set.seed()` mengunci random number generatornya, sehingga cara sampling tidak berubah tiap kali running.
+
+set.seed(100) # dijalankan bersaman sample. angkanya bebas, max 10 digit.
+sample(Daerah, 3)
+```
+
+Untuk sampling dari data.frame, harus dibuat objek berisi index baris yang akan diambil. Index baris dibuat secara random, kemudian diambil baris sesuai index yang sudah dibuat.
+
+Contoh: Sample 60% observasi dari data retail!
+
+```{r}
+# buat index baris secara random
+set.seed(100)
+index <- sample(nrow(retail), # jumlah baris data
+                nrow(retail)*0.6) # jumlah baris yang ingin diambil: 60%
+
+head(index) # menampilkan index random yang akan disampling
+```
+
+```{r}
+# ambil baris berdasarkan index
+retail60 <- retail[index,] # ambil baris/kolom dengan `[,]` (seperti matrix)
+head(retail60)
+```
+
+Additional:
+
+Untuk mengambil sisa 40% nya?
+
+```{r}
+retail40 <- retail[-index,]
+```
+
+Bila ingin mengambil hanya beberapa data, misalnya 5, dari keseluruhan data:
+
+```{r}
+set.seed(100)
+
+# cara panjang:
+# index5 <- sample(nrow(retail), 5)
+# retail5 <- retail[index5,]
+
+# cara singkat:
+retail5 <- retail[sample(nrow(retail), 5),]
+head(retail5)
+```
+
+```{r}
+# menggunakan package dplyr:
+# library(dplyr)
+#
+# set.seed(100)
+# sample_n(retail, 5)
+```
+
+## Subsetting Data
+
+Mengambil baris atau kolom tertentu dari data menggunakan `[,]` dengan memasukan index baris/kolomnya.
+
+`data[index baris,index kolom]`
+```{r}
+# cek data
+head(retail)
+```
+
+
+Contoh:
+
+Adakah kolom yang kiranya dapat dihapus/tidak diperlukan dalam data retail?
+Buang :
+Row.Id
+Order.Id
+Customer.Id
+Product.Id
+
+```{r}
+str(retail)
+```
+Buang :1,2,6,8
+```{r}
+# subset data
+retail [,c(3:5,7,9:15)]
+```
+
+**Dive Deeper!**
+
+Dari data `retail`, Buang kolom "Row.ID", "Order.ID", "Customer.ID" dan "Product.ID", kemudian simpan ke data `retail_clean`:
+
+```{r}
+retail_clean <- retail[,-c(1,2,6,8)]
+```
+
+```{r}
+head(retail_clean)
+```
+```{r}
+retail[1:5,c(4,5)]
+```
+
+
+
+### Conditional Subsetting
+
+Subsetting yang berdasarkan nilai yang ada pada data. Logical operator yang dapat dipakai:
+
+* `>` lebih dari
+* `<` kurang dari
+* `>=` lebih dari sama dengan
+* `<=` kurang dari sama dengan
+* `==` mengecek kesamaan 2 nilai
+* `!=` tidak sama dengan
+* `&` dan
+* `|` atau
+
+kodingan:
+
+* `data[kondisi untuk baris, ]` -> untuk semua kolom
+* `data[kondisi untuk baris, index kolom yg ingin diambil]` -> untuk kolom tertentu
+
+1. Ambil data transaksi yang menghasilkan Profit lebih dari 2000 dan berasal dari Segment Consumer!
+
+```{r}
+ret_2000 <- retail[retail$Profit > 2000,]
+head(ret_2000)
+```
+```{r}
+retclean_2000 <- retail_clean[retail_clean$Profit>2000 &
+                                retail_clean$Segment == "Consumer" ,]
+retclean_2000
+```
+
+**Dive Deeper!**
+
+Kita adalah seorang analis yang hendak menelusuri performa penjualan suatu perusahaan. Menggunakan data retail_clean, kita ingin menganalisis:
+
+1. Ambil data transaksi yang berasal dari Segment Corporate! simpan ke dalam objek `retail_corp`.
+
+```{r}
+# your code
+retail_clean <- retail[,-c(1,2,6,8)]
+retail_corp <- retail_clean[retail_clean$Segment == "Corporate" ,]
+retail_corp
+```
+
+2. Berapa rata-rata profit yang dihasilkan dari Segment Corporate? Hint: kombinasikan subsetting dengan fungsi `summary()`
+
+```{r}
+# your code
+summary(retail_corp$Profit)
+```
+
+3. Dari Segment Corporate, Berapa banyak transaksi yang menghasilkan profit lebih dari rata-rata profit keseluruhan?
+
+```{r}
+# your code
+summary(retail_clean$Profit)
+retail_corp[retail_corp$Profit>28.657,]
+```
+
+4. Seleksi dari data transaksi keseluruhan (`retail_clean`) yang memberikan profit tinggi (profit > 4500) dan kerugian tinggi (profit < -4500)! Berdasarkan data tersebut, coba analisis:
+
+* Apakah lebih banyak transaksi yang menghasilkan profit/merugi?
+* Dari transaksi yang menghasilkan profit, kebanyakan berasal dari Category & Sub.Category produk?
+
+```{r}
+#retail_clean
+retail_clean[retail_clean$Profit > 4500 | retail_clean$Profit < -4500,]
+```
+
+```{r}
+# your code
+retail_clean[(retail_clean$Profit>450) | (retail_clean$Profit<-4500) ,]
+# a. lebih banyak tang profit
+# b. Technology - Copier
+```
+
+## Data Aggregation
+
+Data aggregation dapat **merangkum data** menjadi struktur yang berbeda.
+
+### `table()`
+
+`table()`: menampilkan **frekuensi** tiap **kategori**
+
+`table(data$kolom tipe data kategorik)`
+
+1. Pelanggan perusahaan ini didominansi oleh Segment?
+
+```{r}
+
+```
+
+2. Pelanggan dari Segment apa yang paling sering menggunakan metode shipping First Class? Berapa banyak?
+
+```{r}
+
+```
+
+### `prop.table()`
+
+Untuk mengetahui **proporsi/persentase** dari tiap kategori.
+
+`prop.table(table(...))`
+
+Tampilkan proporsi transaksi untuk masing-masing Segment pelanggan!
+
+```{r}
+
+```
+
+**Dive Deeper!**
+
+1. Dari data `retail_clean`, berapa **banyak transaksi** yang menggunakan Ship.Mode Second Class dan Category-nya Furniture? Berapa **besar proporsinya**?
+
+ ...
+
+2. Dari transaksi yang memberikan Profit lebih dari 100, telusuri pasangan **Segment pelanggan - Category produk** apa yang paling mendominansi?
+
+ ...
+
+### Xtab
+
+`xtab()` menampilkan **jumlah (sum) suatu variabel numerik** untuk tiap variabel factor.
+
+`xtab(formula = ..., data =...)`
+
+Ket:
+
+* formula = numerik ~ factor
+* data = data yang digunakan
+
+Contoh:
+
+Berapa total Profit yang dihasilkan untuk tiap Category Produk?
+
+```{r}
+
+```
+
+Berapa total Sales yang dihasilkan untuk tiap pasangan Segment & Category?
+
+```{r}
+# your code
+
+```
+
+### Aggregate
+
+Untuk aggregasi data lebih fleksibel (dari segi fungsi yang digunakan), kita dapat menggunakan fungsi `aggregate()`. `aggregate()` digunakan untuk menghitung nilai statistik tertentu (jumlah, rata2, dll) berdasarkan kategori tertentu dalam data.
+
+`aggreagete(formula=..., data=..., FUN=...)`
+
+Ket:
+
+* formula = (yg ingin dihitung) ~ (kategori1) + (kategori2) + (dst)
+* data = data yang ingin digunakan
+* fungsi = nilai statistik tertentu:
+    + sum   = jumlah
+    + min   = nilai min
+    + max   = nilai max
+    + mean  = rata rata
+    + median = nilai tengah
+
+Contoh: Berapa rata-rata Sales untuk setiap Segment dan Category?
+
+```{r}
+aggregate(formula= Sales ~ Segment + Category, data = retail_clean, FUN = mean)
+```
+
+**Dive Deeper!**
+
+1. Berapa rata-rata profit yang dihasilkan dari tiap Segmen pelanggan? ...
+```{r}
+aggregate(formula = Profit ~ Segment, data = retail_clean, FUN = mean)
+```
+
+
+2. Berapa jumlah Quantity yang terjual untuk masing-masing Sub.Category? Demand paling tinggi berasal dari Sub.Category ...
+
+```{r}
+#str(retail_clean)
+#aggregate(formula = Quantity ~ Category + Sub.Category, data =retail_clean, FUN = max)
+aggregate(formula = Quantity ~ Sub.Category, data =retail_clean, FUN = sum)
+```
+
+
+3. Pasangan Category-Sub.Category yang yang menghasilkan rata-rata profit tertinggi adalah?
+
+ ...
+```{r}
+aggregate(formula = Profit ~ Category + Sub.Category, data =retail_clean, FUN = mean)
+```
+
+
+Anda dapat membuat **business question** tertentu kemudian mengolah data menggunakan **teknik subsetting dan data aggregation** untuk menghasilkan insight yang diinginkan. Harapannnya insight tersebut dapat menjadi informasi tambahan yang membantu dalam merencanakan **business action**.
+
+# Function [Opt]
+
+**Fungsi** dapat merangkum kodingan untuk proses-proses pengolahan data sehingga berguna untuk *reproducible research*.
+
+* Fungsi dapat disimpan dalam R Script.
+* R script dapat menyimpan beberapa fungsi.
+* Untuk menggunakan fungsi:
+    - dibuat fungsinya kemudian di run, atau
+    - disimpan dalam script dan dipanggil dulu ke dalam R:
+        - source("directory fungsi")
+
+```{r}
+# buat fungsi dalam Rmd
+
+head_tail <- function(dir) {
+
+  data <- read.csv(dir)
+  dat_head<- head(data)
+  dat_tail <- tail(data)
+  rbind(dat_head, dat_tail)
+
+}
+```
+
+```{r}
+# panggil fungsi dari file RScript
+source("fun.R")
+```
+
+Fungsi sudah bisa dijalankan bila sudah tersimpan di Environment.
+
+```{r}
+# fungsi untuk melihat 6 baris teratas dan terbawah dari data
+head_tail(dir = "data_input/retail.csv")
+```
+
+# Packages
+
+Ada beberapa fungsi untuk pengolahan data yang terdapat pada package tertentu. Package harus diinstall terlebih dahulu ke komputer (install 1 kali saja), kemudian di load ke dalam sesi R. Berikut caranya:
+
+```{r}
+# install package dilakukan di console
+# install.packages("stringr")
+
+# panggil package ke dalam R
+library(stringr)
+
+# menggunakan fungsi tanpa panggil package
+# stringr::str_which()
+```
+
+# Cheatsheet & Help
+
+Tidak mungkin kita dapat menghafal semua fungsi di R. Kita dapat menggunakan cheatsheet atau bantuan panel Help.
+
+**Cheatsheet**: hover cursor ke Menubar > Help > Cheatsheet
+**Help**: hover ke panel Help di bagian kanan bawah RStudio, isi dokumentasi fungsi yang ingin dicari pada search bar.
+
+# QnA
+
+1. Cara mengubah value tertentu pada suatu string:
+
+```{r}
+temp <- c("Rp. 1000", 1000, "2000,-") # value dengan huruf/tanda baca = karakter
+temp
+```
+```{r}
+str_replace_all(string = temp,
+                pattern = "\\D", # "\\D" = selain digit
+                replacement = "")
+```
+
+2. Cara deteksi pattern tertentu pada string:
+
+```{r}
+str_detect(string = temp, pattern = "\\D")
+```
+
+3. Cara deteksi baris tertentu yang mengandung pattern:
+
+```{r}
+
+str_which(string = temp, pattern = "\\D")
+```
+
+Contoh 2:
+
+```{r}
+# dummy data
+dummy <- data.frame(nama = c("David", "Lita", "Nabiilah", NA, "Joe"),
+                    umur = c(25,25,23,23,NA),
+                    gender = factor(c("M","F","F",NA,"M")))
+dummy
+```
